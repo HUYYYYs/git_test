@@ -1,4 +1,4 @@
-#pragma once
+#pragma once      
 #define  _CRT_SECURE_NO_WARNINGS 1
 #include <stdio.h>
 #include <assert.h>
@@ -32,7 +32,6 @@ typedef struct Contact
 	int capacity;
 }Contact;
 
-
 void LoadContact(Contact* ps);
 
 void InitContact(Contact* ps);
@@ -52,8 +51,6 @@ void SortContact(const Contact* ps);
 void ModifyContact(const Contact* ps);
 
 bool ShowContact(const Contact* ps);
-
-void ClassifyContact(const Contact* ps);
 
 void DestroyContact(Contact* ps);
 
