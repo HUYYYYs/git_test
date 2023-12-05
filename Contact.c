@@ -63,8 +63,8 @@ void DestroyContact(Contact* ps)
 
 void SaveContact(Contact* ps)
 {
-	FILE* pb = fopen("E://Address Book.txt", "w");
-	FILE* pc = fopen("E://Computer.txt", "wb");
+	FILE* pb = fopen("E:/Address Book.txt", "w");
+	FILE* pc = fopen("E:/Computer.txt", "wb");
 	if (pb == NULL || pc == NULL)
 	{
 		perror("SaveContact");
@@ -96,7 +96,7 @@ static int FindByName(const char name[], const struct Contact* pf)
 	return -1;
 }
 
-void AddContact(struct Contact* ps)
+void AddContact(struct Contact* ps)//如果觉得Add对，不妨多添加几遍，即使重复也能添加进去，不过暂且先不管展示功能的格式
 {
 	assert(ps);
 	if (0 == check_capacity(ps))
@@ -104,22 +104,36 @@ void AddContact(struct Contact* ps)
 		return;
 	}
 	int flag = 1;
+	char buffer[NAME + 5];
 	while(flag)
 	{
+		//为什么直接出现"已有重复联系人, 请重新输入"？
+		//打印完重复联系人后我们还可以继续输入，这是为什么？
 		printf("请输入要添加的名字:> ");
-		fgets(ps->data[ps->sz].name, sizeof(ps->data[ps->sz].name), stdin);
+		fgets(buffer, sizeof(buffer), stdin);//到这里应当会让操作者输入名字，然后放到buffer里
+		buffer[strcspn(buffer, "\n")] = '\0';
+		//但是接下来却直接打印已有重复联系人，没有让操作者输入，说明缓冲区内这时有东西，才直接来到了下面的判断环节
+		//这里的while判断估计会有问题，需要再看一下InitContact和LoadContact再决定
+		//我没记错的话，如果一开始文件里什么也没有，那么ps->sz就是0，capacity自然是一开始定的30
+		//while的这个判断就需要想一下
 		int i = 0;
 		while(i < ps->sz)
 		{
-			if (strcmp(ps->data[i].name, ps->data[ps->sz].name) == 0)
+			if (strcmp(buffer, ps->data[ps->sz].name) == 0)
 			{
 				printf("已有重复联系人, 请重新输入\n");
+				buffer[0] = '\0';
 				break;
 			}
 			++i;
 		}
-		flag = 0;
+		if (i == ps->sz) flag = 0;//有重复就继续输入一遍，没有重复也就是i走完了一遍循环，直到等于ps->sz才退出，这时候没有重复的，那就可行，那就继续
 	}
+	strcpy(ps->data[ps->sz].name, buffer);
+
+    //清空缓冲区
+    int ret;
+    while ((ret = getchar()) != '\n' && ret != EOF);
 
 	printf("请输入要添加的性别:>");
 	fgets(ps->data[ps->sz].gender, sizeof(ps->data[ps->sz].gender), stdin);
@@ -388,9 +402,4 @@ int CmpByName(const void* q1, const void* q2)
 void SortContact(const struct Contact* ps)
 {
 	qsort(ps->data, ps->sz, sizeof(struct PeoInfo), CmpByName);
-}
-
-void ClassifyContact(const Contact* ps)
-{
-	int num = 0;
 }
