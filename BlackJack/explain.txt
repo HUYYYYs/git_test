@@ -1,0 +1,2 @@
+Just look at black jack, this is our schoolwork
+Explain:1.use java code, 2.use Eclipse 3.this BlackJack game 
